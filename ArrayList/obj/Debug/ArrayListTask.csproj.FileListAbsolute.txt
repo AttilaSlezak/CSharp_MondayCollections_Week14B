@@ -1,0 +1,6 @@
+C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\ArrayList\bin\Debug\ArrayList.exe.config
+C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\ArrayList\bin\Debug\ArrayList.exe
+C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\ArrayList\bin\Debug\ArrayList.pdb
+C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\ArrayList\obj\Debug\ArrayListTask.csprojResolveAssemblyReference.cache
+C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\ArrayList\obj\Debug\ArrayList.exe
+C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\ArrayList\obj\Debug\ArrayList.pdb
