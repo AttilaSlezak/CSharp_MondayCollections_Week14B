@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArrayListTask
+namespace ListTask
 {
-    class ArrayListTask
+    class ListTask
     {
         static void Main(string[] args)
         {
-            ArrayList texts = new ArrayList();
+            List<string> texts = new List<string>();
             string newText = "";
             int numberOfTexts = 0;
 
             Console.WriteLine("This application gives texts from the user, sorts them and finally prints the result to the screen.");
-            
+
             do
             {
                 Console.Write("Please write the {0}. text here (or press Enter to finish): ", ++numberOfTexts);
