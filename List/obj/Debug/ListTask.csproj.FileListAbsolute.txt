@@ -1,5 +1,0 @@
-C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\List\bin\Debug\List.exe.config
-C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\List\bin\Debug\List.exe
-C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\List\bin\Debug\List.pdb
-C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\List\obj\Debug\List.exe
-C:\Users\Slezak Attila\Documents\Visual Studio 2015\Projects\MondayCollections\List\obj\Debug\List.pdb
