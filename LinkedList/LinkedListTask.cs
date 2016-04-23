@@ -9,34 +9,25 @@ namespace LinkedListTask
 {
     class LinkedListTask
     {
-        static void Main(string[] args)
+        private static LinkedList<int> intLinkedList = new LinkedList<int>();
+        private static LinkedList<string> strLinkedList = new LinkedList<string>();
+        private static LinkedList<Person> perLinkedList = new LinkedList<Person>();
+        private static LinkedListNode<Person> perLinkedListNode = perLinkedList.First;
+        private static string dataFromUser;
+
+        private static void AskIntegersFromUser()
         {
-            LinkedList<int> intLinkedList = new LinkedList<int>();
-            LinkedList<string> strLinkedList = new LinkedList<string>();
-            LinkedList<Person> perLinkedList = new LinkedList<Person>();
             LinkedListNode<int> intLinkedListNode = intLinkedList.First;
-            LinkedListNode<string> strLinkedListNode = strLinkedList.First;
-            LinkedListNode<Person> perLinkedListNode = perLinkedList.First;
-            
-            Person george = new Person("George", 25, 1.85);
-            Person kate = new Person("Kate", 21, 1.65);
-            Person winstone = new Person("Winstone", 32, 1.75);
-            Person bjorn = new Person("Björn", 28, 1.78);
-            List<Person> defaultPersons = new List<Person> {george, kate, winstone, bjorn};
+            bool isInt;
 
-            string dataFromUser;
             int i = 1;
-
-            Console.WriteLine("Welcome! This program uses LinkedLists.\nFirst it asks for some integer from the user, " 
-                + "then it asks for some string, and finally it asks for some person's data." 
-                + "(In case of persons, user also can choose a default set of persons.)\n");
 
             do
             {
                 Console.Write("Please write the {0}. integer (or press Enter if you finished): ", i);
                 dataFromUser = Console.ReadLine();
                 int number = 0;
-                bool isInt = Int32.TryParse(dataFromUser, out number);
+                isInt = Int32.TryParse(dataFromUser, out number);
                 if (isInt && i == 1)
                 {
                     intLinkedList.AddFirst(number);
@@ -50,13 +41,17 @@ namespace LinkedListTask
                     i++;
                 }
             } while (dataFromUser != "");
+        }
 
-            Console.WriteLine();
-            i = 1;
+        private static void AskStringsFromUser()
+        {
+            LinkedListNode<string> strLinkedListNode = strLinkedList.First;
+
+            int i = 1;
 
             do
             {
-                Console.Write("Please write the {0}. text (or press Enter if you finished): ", i);
+                Console.Write("{0}Please write the {1}. text (or press Enter if you finished): ", i == 1 ? "\n" : "", i);
                 dataFromUser = Console.ReadLine();
                 if (i == 1)
                 {
@@ -71,8 +66,54 @@ namespace LinkedListTask
                     i++;
                 }
             } while (dataFromUser != "");
+        }
 
-            i = 1;
+        private static void AskPeopleFromUser()
+        {
+            string nameFromUser;
+            int ageFromUser;
+            double heightFromUser;
+            bool isInt;
+            bool isDouble;
+
+            int i = 1;
+
+            while (true)
+            {
+                Console.Write("\nPlease write the {0}. person's name (or press Enter if you finished): ", i);
+                if ((nameFromUser = Console.ReadLine()) == "") break;
+                do
+                {
+                    Console.Write("Please write the {0}. person's age: ", i);
+                    isInt = Int32.TryParse(Console.ReadLine(), out ageFromUser);
+                } while (!isInt);
+                do
+                {
+                    Console.Write("Please write the {0}. person's height: ", i);
+                    isDouble = Double.TryParse(Console.ReadLine(), out heightFromUser);
+                } while (!isDouble);
+                if (i == 1)
+                {
+                    perLinkedList.AddFirst(new Person(nameFromUser, ageFromUser, heightFromUser));
+                    perLinkedListNode = perLinkedList.First;
+                    i++;
+                }
+                else
+                {
+                    perLinkedList.AddAfter(perLinkedListNode, new Person(nameFromUser, ageFromUser, heightFromUser));
+                    perLinkedListNode = perLinkedListNode.Next;
+                    i++;
+                }
+            }
+        }
+
+        private static void AddDefaultPeople()
+        {
+            Person george = new Person("George", 25, 1.85);
+            Person kate = new Person("Kate", 21, 1.65);
+            Person winstone = new Person("Winstone", 32, 1.75);
+            Person bjorn = new Person("Björn", 28, 1.78);
+            List<Person> defaultPersons = new List<Person> { george, kate, winstone, bjorn };
 
             do
             {
@@ -84,11 +125,10 @@ namespace LinkedListTask
             {
                 for (int j = 0; j < defaultPersons.Count; j++)
                 {
-                    if (i == 1)
+                    if (perLinkedList.Count < 1)
                     {
                         perLinkedList.AddFirst(defaultPersons[j]);
                         perLinkedListNode = perLinkedList.First;
-                        i++;
                     }
                     else
                     {
@@ -97,10 +137,13 @@ namespace LinkedListTask
                     }
                 }
             }
+        }
 
+        private static void WriteToScreenTheResults()
+        {
             Console.WriteLine("\nThe numbers from the LinkedList:");
 
-            for(LinkedListNode<int> it = intLinkedList.First; it != null; it = it.Next)
+            for (LinkedListNode<int> it = intLinkedList.First; it != null; it = it.Next)
             {
                 Console.WriteLine(it.Value);
             }
@@ -111,13 +154,26 @@ namespace LinkedListTask
             {
                 Console.WriteLine(it.Value);
             }
-            
+
             Console.WriteLine("\nThe persons from the LinkedList:");
 
             for (LinkedListNode<Person> it = perLinkedList.First; it != null; it = it.Next)
             {
                 Console.WriteLine(it.Value);
             }
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Welcome! This program uses LinkedLists.\nFirst it asks for some integer from the user, " 
+                + "then it asks for some string, and finally it asks for some person's data." 
+                + "(In case of persons, user also can choose a default set of persons.)\n");
+
+            AskIntegersFromUser();
+            AskStringsFromUser();
+            AskPeopleFromUser();
+            AddDefaultPeople();
+            WriteToScreenTheResults();
         }
     }
 }
