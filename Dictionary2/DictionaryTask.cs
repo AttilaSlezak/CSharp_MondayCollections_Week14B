@@ -47,7 +47,7 @@ namespace Dictionary2
                 {"thrillion", "1000000000000"}
             };
 
-        private static void collectNumberParts(string text)
+        private static void CollectNumberParts(string text)
         {
             int positionInStr = 0;
 
@@ -56,7 +56,8 @@ namespace Dictionary2
                 int currentPos = 0;
                 while ((positionInStr = text.ToLower().Substring(currentPos).IndexOf(oneNum.Key)) > -1)
                 {
-                    if (!((oneNum.Value == "6" || oneNum.Value == "7" || oneNum.Value == "9")
+                    if (positionInStr + currentPos + oneNum.Key.Length + 2 > text.Length 
+                        || !((oneNum.Value == "6" || oneNum.Value == "7" || oneNum.Value == "9")
                         && text.Substring(positionInStr + currentPos + oneNum.Key.Length, 2) == "ty"))
                     {
                         _numberParts.Add(new NumberPart(positionInStr + currentPos, oneNum.Key.Length, oneNum.Value.Length, oneNum.Value));
@@ -66,26 +67,95 @@ namespace Dictionary2
             }
         }
 
-        private static void sortNumberParts()
+        private static void SortNumberParts()
         {
             NumberPartPosComparer numPartPosComparer = new NumberPartPosComparer();
             _numberParts.Sort(numPartPosComparer);
         }
 
-        private static void searchBeginAndEndOfNums(string text)
+        private static void SearchBeginAndEndOfNums(string text)
         {
             _numberParts[0].Beginning = true;
             _numberParts[_numberParts.Count - 1].Ending = true;
 
             for (int i = 0; i < _numberParts.Count - 1; i++)
             {
-                if (((_numberParts[i].Position + _numberParts[i].StrLong) == _numberParts[i+1].Position - 1) 
+                if (((_numberParts[i].Position + _numberParts[i].StrLong) == _numberParts[i + 1].Position - 1)
                     && !(text[_numberParts[i + 1].Position - 1] == ' ' || text[_numberParts[i + 1].Position - 1] == '-'))
                 {
-                    Console.WriteLine(text[_numberParts[i + 1].Position - 1]);
                     _numberParts[i].Ending = true;
                     _numberParts[i + 1].Beginning = true;
                 }
+                else if (((_numberParts[i].Position + _numberParts[i].StrLong) == _numberParts[i + 1].Position - 1)
+                    && text[_numberParts[i + 1].Position - 1] == '-' && !(_numberParts[i].NumLong == 2 && _numberParts[i + 1].NumLong == 1))
+                {
+                    _numberParts[i].Ending = true;
+                    _numberParts[i + 1].Beginning = true;
+                }
+                else if (((_numberParts[i].Position + _numberParts[i].StrLong) <= _numberParts[i + 1].Position - 3)
+                    && (text.Substring(_numberParts[i + 1].Position - 5, 5) != " and "
+                    || !(_numberParts[i].NumLong == 3 && (_numberParts[i + 1].NumLong == 2 || _numberParts[i + 1].NumLong == 1))))
+                {
+                    _numberParts[i].Ending = true;
+                    _numberParts[i + 1].Beginning = true;
+                }
+                else if (((_numberParts[i].Position + _numberParts[i].StrLong) == _numberParts[i + 1].Position - 2)
+                    && (text.Substring(_numberParts[i + 1].Position - 2, 2) != ", " || !((_numberParts[i].NumLong - 1) % 3 == 0)))
+                {
+                    _numberParts[i].Ending = true;
+                    _numberParts[i + 1].Beginning = true;
+                }
+                else if (_numberParts[i].NumLong == 3 && _numberParts[i + 1].NumLong == 3)
+                {
+                    _numberParts[i].Ending = true;
+                    _numberParts[i + 1].Beginning = true;
+                }
+                else if (_numberParts.Count > i + 2
+                    && _numberParts[i].NumLong == 3 && _numberParts[i + 1].NumLong == 1 && _numberParts[i + 2].NumLong == 3)
+                {
+                    _numberParts[i].Ending = true;
+                    _numberParts[i + 1].Beginning = true;
+                }
+                else if (_numberParts[i].NumLong == 2 && (_numberParts[i + 1].NumLong == 2 || _numberParts[i + 1].NumLong == 3))
+                {
+                    _numberParts[i].Ending = true;
+                    _numberParts[i + 1].Beginning = true;
+                }
+                else if (_numberParts.Count > i + 2
+                    && _numberParts[i].NumLong == 2 && _numberParts[i + 1].NumLong == 1 && _numberParts[i + 2].NumLong == 3)
+                {
+                    if (text[_numberParts[i + 1].Position - 1] == '-')
+                    {
+                        _numberParts[i + 1].Ending = true;
+                        _numberParts[i + 2].Beginning = true;
+                    }
+                    else
+                    {
+                        _numberParts[i].Ending = true;
+                        _numberParts[i + 1].Beginning = true;
+                    }
+                }
+                else if (_numberParts[i].NumLong == 1 && (_numberParts[i + 1].NumLong == 1 || _numberParts[i + 1].NumLong == 2))
+                {
+                    _numberParts[i].Ending = true;
+                    _numberParts[i + 1].Beginning = true;
+                }
+            }
+
+            int lastDivisibleByThousand = 0;
+            for (int i = 0; i < _numberParts.Count; i++)
+            {
+                if (_numberParts[i].Beginning)
+                    lastDivisibleByThousand = 0;
+
+                if (lastDivisibleByThousand != 0 && _numberParts[i].NumLong >= lastDivisibleByThousand)
+                {
+                    _numberParts[i - 1].Ending = true;
+                    _numberParts[i].Beginning = true;
+                }
+
+                if (_numberParts[i].NumLong > 3 && (_numberParts[i].NumLong - 1) % 3 == 0)
+                    lastDivisibleByThousand = _numberParts[i].NumLong;
             }
         }
 
@@ -95,9 +165,9 @@ namespace Dictionary2
             Console.Write("Please write the text here: ");
             string text = Console.ReadLine();
 
-            collectNumberParts(text);
-            sortNumberParts();
-            searchBeginAndEndOfNums(text);
+            CollectNumberParts(text);
+            SortNumberParts();
+            SearchBeginAndEndOfNums(text);
 
             foreach (NumberPart oneNumPart in _numberParts)
             {
