@@ -93,7 +93,8 @@ namespace Dictionary2
                     _numberParts[i + 1].Beginning = true;
                 }
                 else if (((_numberParts[i].Position + _numberParts[i].StrLong) <= _numberParts[i + 1].Position - 3)
-                    && (text.Substring(_numberParts[i + 1].Position - 5, 5) != " and "
+                    && ((text.Substring(_numberParts[i + 1].Position - 5, 5) != " and " 
+                    || (_numberParts[i].Position + _numberParts[i].StrLong) != _numberParts[i + 1].Position - 5)
                     || !(_numberParts[i].NumLong == 3 && (_numberParts[i + 1].NumLong == 2 || _numberParts[i + 1].NumLong == 1))))
                 {
                     _numberParts[i].Ending = true;
@@ -159,15 +160,101 @@ namespace Dictionary2
             }
         }
 
+        private static void CreateDisplayableValues()
+        {
+            for (int i = 0; i < _numberParts.Count; i++)
+            {
+                if (!_numberParts[i].Ending && i < _numberParts.Count - 1)
+                {
+                    if (_numberParts[i].NumLong == 2 && _numberParts[i + 1].NumLong == 1)
+                    {
+                        _numberParts[i].ValueToDisplay = _numberParts[i].ValueToDisplay[0].ToString();
+                    }
+                    else if (_numberParts[i].NumLong == 3 && _numberParts[i + 1].NumLong == 2)
+                    {
+                        _numberParts[i].ValueToDisplay = _numberParts[i].ValueToDisplay.Substring(0, _numberParts[i].CurrNumLong - 2);
+                    }
+                    else if (_numberParts[i].NumLong == 3 && _numberParts[i + 1].NumLong == 1)
+                    {
+                        _numberParts[i].ValueToDisplay = _numberParts[i].ValueToDisplay.Substring(0, _numberParts[i].CurrNumLong - 1);
+                    }
+                    else if ((_numberParts[i].NumLong - 1) % 3 == 0 && _numberParts[i].NumLong != 1)
+                    {
+                        for (int j = i + 1; j < _numberParts.Count && j <= i + 5; j++)
+                        {
+                            if (!_numberParts[j].Beginning)
+                            {
+                                if (j == i + 1 && (_numberParts[j].NumLong == 2 || _numberParts[j].NumLong == 3))
+                                {
+                                    _numberParts[i].ValueToDisplay = _numberParts[i].ValueToDisplay.Substring(0, _numberParts[i].CurrNumLong - _numberParts[j].NumLong);
+                                }
+                                else if (_numberParts[j].NumLong == 1)
+                                {
+                                    if (j + 1 < _numberParts.Count && _numberParts[j + 1].NumLong == 3)
+                                    {
+                                        _numberParts[i].ValueToDisplay = _numberParts[i].ValueToDisplay.Substring(0, _numberParts[i].CurrNumLong - 3);
+                                    }
+                                    else if (_numberParts[j - 1].NumLong != 3 && _numberParts[j - 1].NumLong != 2)
+                                    {
+                                        _numberParts[i].ValueToDisplay = _numberParts[i].ValueToDisplay.Substring(0, _numberParts[i].CurrNumLong - 1);
+                                    }
+                                }
+
+                                if (j + 1 < _numberParts.Count && (_numberParts[j + 1].NumLong - 1) % 3 == 0 && _numberParts[j + 1].NumLong != 1)
+                                {
+                                    _numberParts[i].ValueToDisplay = _numberParts[i].ValueToDisplay.Substring(0, _numberParts[i].CurrNumLong - (_numberParts[j + 1].NumLong - 1));
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (_numberParts[i].NumLong == 1 && _numberParts[i + 1].NumLong == 3)
+                    {
+                        _numberParts[i + 1].ValueToDisplay = _numberParts[i + 1].ValueToDisplay.Substring(1);
+                    }
+                    else if ((_numberParts[i].NumLong == 3 || _numberParts[i].NumLong == 2 || _numberParts[i].NumLong == 1) 
+                            && (_numberParts[i + 1].NumLong - 1) % 3 == 0 && _numberParts[i + 1].NumLong != 1)
+                    {
+                        _numberParts[i + 1].ValueToDisplay = _numberParts[i + 1].ValueToDisplay.Substring(1);
+                    }
+                }
+            }
+        }
+
+        public static void PrintTextWithDigits(string text)
+        {
+            CollectNumberParts(text);
+            SortNumberParts();
+            SearchBeginAndEndOfNums(text);
+            CreateDisplayableValues();
+            int lastEndPos = 0;
+            Console.Write("\nThe result:\n\t");
+
+            foreach (NumberPart oneNumPart in _numberParts)
+            {
+                if (oneNumPart.Beginning)
+                Console.Write(text.Substring(lastEndPos, oneNumPart.Position - lastEndPos));
+
+                Console.Write(oneNumPart.ValueToDisplay);
+
+                if (oneNumPart.Ending)
+                    lastEndPos = oneNumPart.Position + oneNumPart.StrLong;
+            }
+            Console.WriteLine(text.Substring(lastEndPos) + "\n");
+        }
+
         static void Main(string[] args)
         {
             Console.WriteLine("This application gives a text and change the written numbers in it to numerals.");
             Console.Write("Please write the text here: ");
             string text = Console.ReadLine();
 
-            CollectNumberParts(text);
-            SortNumberParts();
-            SearchBeginAndEndOfNums(text);
+            PrintTextWithDigits(text);
 
             foreach (NumberPart oneNumPart in _numberParts)
             {
