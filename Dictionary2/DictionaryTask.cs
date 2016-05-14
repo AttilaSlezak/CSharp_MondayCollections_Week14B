@@ -44,7 +44,9 @@ namespace Dictionary2
                 {"thousand", "1000"},
                 {"million", "1000000"},
                 {"billion", "1000000000"},
-                {"thrillion", "1000000000000"}
+                {"trillion", "1000000000000"},
+                {"quadrillion", "1000000000000000"},
+                {"quintillion", "1000000000000000000"}
             };
 
         private static void CollectNumberParts(string text)
@@ -56,9 +58,12 @@ namespace Dictionary2
                 int currentPos = 0;
                 while ((positionInStr = text.ToLower().Substring(currentPos).IndexOf(oneNum.Key)) > -1)
                 {
-                    if (positionInStr + currentPos + oneNum.Key.Length + 2 > text.Length 
+                    if ((positionInStr + currentPos + oneNum.Key.Length + 2 > text.Length 
                         || !((oneNum.Value == "6" || oneNum.Value == "7" || oneNum.Value == "9")
                         && text.Substring(positionInStr + currentPos + oneNum.Key.Length, 2) == "ty"))
+                        && (positionInStr + currentPos + oneNum.Key.Length + 4 > text.Length
+                        || !((oneNum.Value == "4" || oneNum.Value == "6" || oneNum.Value == "7" || oneNum.Value == "8" || oneNum.Value == "9")
+                        && text.Substring(positionInStr + currentPos + oneNum.Key.Length, 4) == "teen")))
                     {
                         _numberParts.Add(new NumberPart(positionInStr + currentPos, oneNum.Key.Length, oneNum.Value.Length, oneNum.Value));
                     }
