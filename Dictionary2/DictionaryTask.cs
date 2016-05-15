@@ -80,32 +80,30 @@ namespace Dictionary2
 
         private static void RemoveWordPartsFromNumList(string text)
         {
-            Regex pattern = new Regex("[A-Za-z]");
-
-            if (_numberParts.Count == 0)
-                return;
-
-            else if (_numberParts.Count == 1)
-            {
-                if ((_numberParts[0].Position > 0 && pattern.IsMatch(text[_numberParts[0].Position - 1].ToString()))
-                    || (text.Length > _numberParts[0].Position + _numberParts[0].StrLong
-                    && pattern.IsMatch(text[_numberParts[0].Position + _numberParts[0].StrLong].ToString())))
-                {
-                    _numberParts.RemoveAt(0);
-                    return;
-                }
-                else
-                {
-                    return;
-                }
-            }
+            Regex pattern = new Regex("[A-Za-z]"); 
             
             for (int i = 0; i < _numberParts.Count; i++)
             {
-                if (i < _numberParts.Count - 1
+                if (_numberParts.Count == 1)
+                {
+                    if ((_numberParts[0].Position > 0 && pattern.IsMatch(text[_numberParts[0].Position - 1].ToString()))
+                        || (text.Length > _numberParts[0].Position + _numberParts[0].StrLong
+                        && pattern.IsMatch(text[_numberParts[0].Position + _numberParts[0].StrLong].ToString())))
+                    {
+                        _numberParts.RemoveAt(0);
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                else if (i < _numberParts.Count - 1
                     && _numberParts[i].Position + _numberParts[i].StrLong < _numberParts[i + 1].Position)
                 {
-                    if (pattern.IsMatch(text[_numberParts[i].Position + _numberParts[i].StrLong].ToString()))
+                    if (pattern.IsMatch(text[_numberParts[i].Position + _numberParts[i].StrLong].ToString())
+                        || (_numberParts[i].Position != 0 && pattern.IsMatch(text[_numberParts[i].Position - 1].ToString())))
                     {
                         _numberParts.RemoveAt(i);
                         i--;
@@ -117,7 +115,8 @@ namespace Dictionary2
                     && _numberParts[i - 1].Position + _numberParts[i - 1].StrLong < _numberParts[i].Position)
                 {
                     if (pattern.IsMatch(text[_numberParts[i].Position - 1].ToString())
-                        || pattern.IsMatch(text[_numberParts[i].Position + _numberParts[i].StrLong].ToString()))
+                        || (_numberParts[i].Position + _numberParts[i].StrLong != text.Length 
+                        && pattern.IsMatch(text[_numberParts[i].Position + _numberParts[i].StrLong].ToString())))
                     {
                         _numberParts.RemoveAt(i);
                     }
